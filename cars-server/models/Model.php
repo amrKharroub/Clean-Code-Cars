@@ -19,7 +19,32 @@ abstract class Model{
     }
 
     public static function findAll(mysqli $connection){
-        //implement this
+        $sql = sprintf("SELECT * FROM %s",
+        static::$table);
+
+        $query = $connection->prepare($sql);
+        $query ->execute();
+
+        $data = $query -> get_result()->fetch_assoc();
+
+        if(!$data){
+            return null;
+        }
+        $result = [];
+        while($d = $data){
+            $result[] = new static($d);
+        }
+        return $result;
+    }
+
+    public static function delete(mysqli $connection, int $id){
+        $sql = sprintf("DELETE FROM %s WHERE %s = ?", static::$table, static::$primary_key);
+
+        $query = $connection->prepare($sql);
+        $query->bind_param("i", $id);
+        $query->execute();
+
+        return $query->affected_rows;
     }
 
 }

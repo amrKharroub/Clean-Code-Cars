@@ -44,6 +44,26 @@ class Car extends Model {
         return ["id" => $this->id, "name" => $this->name, "year" => $this->year, "color" => $this->color];
     }
 
+    //create or update
+    public function save(mysqli $connection){
+        if($this->id){
+            //update
+            $sql = sprintf("UPDATE %s SET name = ?, year = ?, color = ? WHERE id = ?",
+            static::$table);
+            $query = $connection->prepare($sql);
+            $query->bind_param("sssi", $this->name, $this->year, $this->color, $this->id);
+            $query->execute();
+            return $query->affected_rows;
+        } else {
+            //create
+            $sql = sprintf("INSERT INTO %s VALUES (?, ?, ?)",
+            static::$table);
+            $query = $connection->prepare($sql);
+            $query->bind_param("sss", $this->name, $this->year, $this->color);
+            $query->execute();
+            return $query->affected_rows;
+        }
+    }
 }
 
 ?>
