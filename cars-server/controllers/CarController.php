@@ -2,6 +2,7 @@
 require_once(__DIR__ . "/../models/Car.php");
 require_once(__DIR__ . "/../connection/connection.php");
 require_once(__DIR__ . "/../services/ResponseService.php");
+require_once(__DIR__ . "/../services/CarService.php");
 
 class CarController {
 
@@ -15,15 +16,30 @@ class CarController {
             return;
         }
        
-        //not allowed to write logic in my controller!!!
-        //$car = Car::find($connection, $id);
-        //$car = $car ? $car->toArray() : [];
-        $car = CarService::findCarByID($id);
+        $car = CarService::findCarByID($connection, $id);
         echo ResponseService::response(200, $car);
         return;
     }
 
-    //try catch 
+    function getAllCars(){
+        global $connection;
+        $cars = CarService::getAllCars($connection);
+        try{
+            $json_cars = json_encode($cars);
+            echo ResponseService::response(200, $cars);
+        } catch (Exception $e){
+            echo ResponseService::response(500, "failed to incode");
+        }
+        return;
+    }
+
+    function getSortedCarsByColor(){
+        global $connection;
+
+        $cars = CarService::sortCarsByColor($connection);
+        echo ResponseService::response(200, $cars);
+        return;
+    }
 }
 
 ?>

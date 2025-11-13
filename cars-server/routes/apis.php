@@ -4,5 +4,5 @@
 $apis = [
     '/cars'         => ['controller' => 'CarController', 'method' => 'getCarByID'],
     '/cars/[0-9]+'         => ['controller' => 'CarController', 'method' => 'getCarByID'],
-    '/users'         => ['controller' => 'UserController', 'method' => 'getUsers']
+    '/sotedCars'         => ['controller' => 'CarController', 'method' => 'getSortedCarsByColor']
 ];
