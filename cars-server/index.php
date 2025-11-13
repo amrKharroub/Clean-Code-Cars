@@ -1,5 +1,6 @@
 <?php 
 require_once("./services/ResponseService.php");
+require_once("routes/api.php");
 
 $base_dir = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/');
 $request = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
@@ -11,17 +12,20 @@ if (strpos($request, $base_dir) === 0) {
 if ($request == '') {
     $request = '/';
 }
+$found = false;
+$key = "";
+foreach(array_keys($apis) as $url){
+	$pattern= "|^" . str_replace("/", "\/", $url) . "$|";
+    if (preg_match($pattern, $request)){
+        $found = true;
+        $key = $url;
+        break;
+    }
+}
 
-//array of routes - a mapping between routes and controller name and method!
-//remove routes from here!! 
-$apis = [
-    '/cars'         => ['controller' => 'CarController', 'method' => 'getCarByID'],
-    '/users'         => ['controller' => 'UserController', 'method' => 'getUsers']
-];
-
-if (isset($apis[$request])) {
-    $controller_name = $apis[$request]['controller']; 
-    $method = $apis[$request]['method'];
+if ($found) {
+    $controller_name = $apis[$key]['controller']; 
+    $method = $apis[$key]['method'];
     require_once "controllers/{$controller_name}.php";
     
     $controller = new $controller_name();
