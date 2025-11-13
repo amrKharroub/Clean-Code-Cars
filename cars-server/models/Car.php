@@ -9,31 +9,24 @@ class Car extends Model {
 
     protected static string $table = "cars";
 
-    public function __construct(array $data){
-        $this->id = $data["id"];
-        $this->name = $data["name"];
-        $this->year = $data["year"];
-        $this->color = $data["color"];
-    }
-
     public function getID(){
-        return $this->id;
+        return $this->attributes["id"];
     }
 
     public function setName(string $name){
-        $this->name = $name;
+        $this->attributes["name"] = $name;
     }
 
     public function getName(){
-        return $this->name;
+        return $this->attributes["name"];
     }
 
     public function setColor(string $color){
-        $this->color = $color;
+        $this->attributes["color"] = $color;
     }
 
     public function getColor(){
-        return $this->color;
+        return $this->attributes["color"];
     }
 
     public function __toString(){

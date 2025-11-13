@@ -1,41 +1,45 @@
 <?php
-include("../models/Car.php");
-include("../connection/connection.php");
-include("../services/ResponseService.php");
+require_once(__DIR__ . "/../models/Car.php");
+require_once(__DIR__ . "/../connection/connection.php");
+require_once(__DIR__ . "/../services/ResponseService.php");
+require_once(__DIR__ . "/../services/CarService.php");
 
-function getCarByID(){
-    global $connection;
+class CarController {
 
-    if(isset($_GET["id"])){
-        $id = $_GET["id"];
-    }else{
-        echo ResponseService::response(500, "ID is missing");
+    function getCarByID(){
+        global $connection;
+
+        if(isset($_GET["id"])){
+            $id = $_GET["id"];
+        }else{
+            echo ResponseService::response(500, "ID is missing");
+            return;
+        }
+       
+        $car = CarService::findCarByID($connection, $id);
+        echo ResponseService::response(200, $car);
         return;
     }
 
-    $car = Car::find($connection, $id);
-    echo ResponseService::response(200, $car->toArray());
-    return;
-}
-
-function getCars(){
-    global $connection;
-    if(isset($_GET["id"])){
-        $car = Car::find($connection, $_GET["id"]);
-        echo ResponseService::response(200, $car->toArray());
+    function getAllCars(){
+        global $connection;
+        $cars = CarService::getAllCars($connection);
+        try{
+            $json_cars = json_encode($cars);
+            echo ResponseService::response(200, $cars);
+        } catch (Exception $e){
+            echo ResponseService::response(500, "failed to incode");
+        }
+        return;
     }
-    $cars = Car::findAll($connection);
-    $cars_as_array = array_map(fn($car) => $car->toArray(), $cars);
-    echo ResponseService::response(200, $cars_as_array);
+
+    function getSortedCarsByColor(){
+        global $connection;
+
+        $cars = CarService::sortCarsByColor($connection);
+        echo ResponseService::response(200, $cars);
+        return;
+    }
 }
-
-//getCarById();
-// getCars();
-
-//ToDO: 
-//transform getCarByID to getCars()
-//if the id is set? then we retrieve the specific car 
-//if no ID, then we retrieve all the cars
-
 
 ?>
